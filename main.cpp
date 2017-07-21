@@ -2,6 +2,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <list>
 
 
 
@@ -70,7 +71,7 @@ public:
 
 	bool remove( const std::string& sWord ) throw()
 	{
-		return false;
+
 	}
 
 	bool isWord( const std::string& sWord ) const throw()
@@ -117,20 +118,31 @@ int main()
 	Node dictionary;
 
 	//dictionary.printIndexTable();
+	std::list<std::string> testSet;
+	std::list<std::string>::iterator It;
 
-	dictionary.insert("ada");
-	dictionary.insert("adaa");
-	dictionary.insert("adab");
-	dictionary.insert("aday");
-	dictionary.insert("adadada");
+	testSet.push_back("ada");
+	testSet.push_back("adaa");
+	testSet.push_back("adab");
+	testSet.push_back("aday");
+	testSet.push_back("adadada");
+
+	for ( It = testSet.begin(); It != testSet.end(); It++ )
+	{
+		dictionary.insert( *It );
+	}
+
 	dictionary.remove("ada");
 
-	std::cout << "blah : " << (dictionary.isWord("blah")?"is word":"is not word") << std::endl;
-	std::cout << "ada : " << (dictionary.isWord("ada")?"is word":"is not word") << std::endl;
-	std::cout << "adaa : " << (dictionary.isWord("adaa")?"is word":"is not word") << std::endl;
-	std::cout << "adab : " << (dictionary.isWord("adab")?"is word":"is not word") << std::endl;
-	std::cout << "aday : " << (dictionary.isWord("aday")?"is word":"is not word") << std::endl;
-	std::cout << "adada : " << (dictionary.isWord("adada")?"is word":"is not word") << std::endl;
+	testSet.push_back("blah");
+	testSet.push_back("adada");
+
+	for ( It = testSet.begin(); It != testSet.end(); It++ )
+	{
+		std::cout << *It << " : " << (dictionary.isWord( *It )?"\033[1;32mis word\033[0m":"\033[1;31mis not word\033[0m") << std::endl;
+	}
+
+
 	std::cout << "Three height: " << dictionary.getHeight() << std::endl;
 
 	return 0;
