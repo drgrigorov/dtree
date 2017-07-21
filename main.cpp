@@ -24,6 +24,19 @@ private:
 		return cFrom - 'A';
 	}
 
+	//Check if the node has any children
+	bool HasChildren() const throw()
+	{
+		for ( int i = 0; i < MAXSIZE; i++ )
+		{
+			if ( m_Children[i] )
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
 public:
 	Node() throw()
 	:
@@ -71,7 +84,27 @@ public:
 
 	bool remove( const std::string& sWord ) throw()
 	{
+		//String exhausted, we need to set this node as non-terminal
+		//Deletion should be handled from outside the node.
+		if ( sWord.size() == 0 )
+		{
+			m_bIsTerminal = false;
+			return true; //return end of processing
+		}
 
+		Node* nextChild = m_Children[ Index(sWord[0]) ];
+		if ( nextChild )
+		{
+			if ( nextChild->remove( sWord.substr(1) ) )
+			{
+				if ( ! nextChild->HasChildren() )
+				{
+					m_Children[ Index(sWord[0]) ] = 0;
+					delete nextChild;
+				}
+			}
+			
+		}
 	}
 
 	bool isWord( const std::string& sWord ) const throw()
@@ -95,7 +128,7 @@ public:
 
 	int getHeight() const throw()
 	{
-		//This method includes the height including root node.
+		//This method prints the height including root node.
 		uint32_t nRes = 0;
 		for ( int i = 0; i < MAXSIZE; i++ )
 		{
@@ -142,8 +175,11 @@ int main()
 		std::cout << *It << " : " << (dictionary.isWord( *It )?"\033[1;32mis word\033[0m":"\033[1;31mis not word\033[0m") << std::endl;
 	}
 
-
 	std::cout << "Three height: " << dictionary.getHeight() << std::endl;
+
+	dictionary.remove("adadada");
+
+	std::cout << "Three height (after deletion): " << dictionary.getHeight() << std::endl;
 
 	return 0;
 }
