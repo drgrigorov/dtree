@@ -1,19 +1,34 @@
 
 #include <iostream>
 #include <string>
+#include <vector>
 
 
 
 class Node
 {
 private:
-	int Index( char cFrom ) const throw()
+	//Did not know that those were introduced in c++11
+	static const uint8_t MAXSIZE = (('Z' - 'A') + ('z' - 'a') + 1);
+	typedef std::vector< Node* > Nodes;
+
+	Nodes m_Children;
+
+
+	const uint8_t Index( char cFrom ) const throw()
 	{
 		if (cFrom >= 'a')
 			return (cFrom - 'a' + ('Z' - 'A' + 1));
 		return cFrom - 'A';
 	}
+
 public:
+	Node() throw()
+	:
+		m_Children( MAXSIZE, 0 )
+	{
+	}
+
 	void printIndexTable() const throw()
 	{
 		for (char c = 'A'; c <= 'Z'; c++)
@@ -26,7 +41,24 @@ public:
 		}
 	}
 
-	bool insert( const std::string& sWord ) throw() { return false; }
+	bool insert( const std::string& sWord ) throw()
+	{
+		//emtpy word or end of word
+		if ( sWord.size() == 0 ) return false;
+
+		Node* nextChild = m_Children[ Index(sWord[0]) ];
+		if ( nextChild )
+		{
+			return nextChild->insert( sWord.substr(1) );
+		}
+		else
+		{
+			nextChild = new Node();
+			m_Children[Index(sWord[0])] = nextChild;
+			return nextChild->insert( sWord.substr(1) );
+		}
+	}
+
 	bool remove( const std::string& sWord ) throw() { return false; }
 	bool isWord( const std::string& sWord ) const throw() { return false; }
 	int getHeight() const throw() { return 0;}
